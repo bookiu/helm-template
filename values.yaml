@@ -1,0 +1,62 @@
+nameOverride: ""
+fullnameOverride: ""
+
+# Docker image
+image:
+  name: "nginx"
+  tag: "latest"
+  registry: https://ccr.ccs.tencentyun.com
+  repositoryName: "library"
+  pullPolicy: IfNotPresent
+  secret:
+    name: tencentcloud
+    username: coding
+    password: coding
+
+# Pod
+pod:
+  annotations: {}
+  securityContext:
+    # fsGroup: 2000
+  resources: {}
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+# Service
+service:
+  type: ClusterIP
+  name: http
+  protocol: TCP
+  port: 80
+  targetPort: 80
+
+# Ingress
+# Annotations: https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#annotations
+ingress:
+  enabled: true
+  className: ""
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-http01-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/proxy-body-size: 100m
+  host: example.com
+  enableTls: false
+
+# Cert Manager
+certmanager:
+  clusterIssuerEnabled: true
+  email: yaxin.me@gmail.com
+  ingressClassName: nginx

@@ -1,0 +1,37 @@
+{{- $certmanager := lookup "v1" "Deployment" "" "cert-manager" -}}
+{{- $clusterissuer := lookup "v1" "ClusterIssuer" .Release.Namespace "letsencrypt-http01-prod" -}}
+{{- $enabled := .Values.certmanager.clusterIssuerEnabled -}}
+{{- if and $certmanager (not $clusterissuer) $enabled -}}
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-http01-staging
+spec:
+  acme:
+    email: {{ .Values.certmanager.email }}
+    privateKeySecretRef:
+      name: letsencrypt-staging
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    solvers:
+    - http01:
+        ingress:
+          class: {{ .Values.certmanager.ingressClassName }}
+      selector: {}
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-http01-prod
+spec:
+  acme:
+    email: {{ .Values.certmanager.email }}
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    server: https://acme-v02.api.letsencrypt.org/directory
+    solvers:
+    - http01:
+        ingress:
+          class: {{ .Values.certmanager.ingressClassName }}
+      selector: {}
+{{- end -}}

@@ -23,12 +23,12 @@ If release name contains chart name it will be used as a full name.
 {{- end }}
 {{- end }}
 
-{{/*                                                                                                                                                                                                                                                     
-Create chart name and version as used by the chart label.                                                                                                                                                                                                
-*/}}                                                                                                                                                                                                                                                     
-{{- define "chart" -}}                                                                                                                                                                                                                           
-{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}                                                                                                                                                           
-{{- end }}    
+{{/*
+Create chart name and version as used by the chart label.
+*/}}
+{{- define "chart" -}}
+{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
+{{- end }}
 
 {{/*
 Selector labels
@@ -49,3 +49,11 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
+
+{{/*
+Full image uri with tag
+*/}}
+{{- define "deployImage" -}}
+{{- printf "%s/%s/%s:%s" .Values.image.registry .Values.image.repositoryName .Values.image.name .Values.image.tag }}
+{{- end }}
+

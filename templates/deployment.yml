@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "fullname" . }}
+  name: {{ include "name" . }}
   labels:
     {{- include "labels" . | nindent 4 }}
 spec:
@@ -10,7 +10,7 @@ spec:
       {{- include "selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
+      {{- with .Values.pod.annotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -19,38 +19,30 @@ spec:
     spec:
       imagePullSecrets:
         - name: {{ .Values.image.secret.name }}
-      securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: {{ include "deployImage" . }}
+            {{- toYaml .Values.container.securityContext | nindent 12 }}
+          image: {{ include "imageUri" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.container.resources | nindent 12 }}
+          {{- if .Values.appEnv }}
           envFrom:
             - configMapRef:
-                name: {{ include "fullname" . }}
-          volumeMounts:
-            - mountPath: /app
-              name: app
-            - mountPath: /app/storage/log
-              name: applog
-      volumes:
-        - name: app
-          emptyDir: {}
-        - name: applog
-          emptyDir: {}
-      {{- with .Values.nodeSelector }}
+                name: {{ include "appEnvConfigMapName" . }}
+          {{- end }}
+      securityContext:
+        {{- toYaml .Values.pod.securityContext | nindent 8 }}
+      {{- with .Values.pod.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.affinity }}
+      {{- with .Values.pod.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.tolerations }}
+      {{- with .Values.pod.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}

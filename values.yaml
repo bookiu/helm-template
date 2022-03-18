@@ -1,6 +1,3 @@
-nameOverride: ""
-fullnameOverride: ""
-
 # Docker image
 image:
   name: "nginx"
@@ -16,7 +13,21 @@ image:
 # Pod
 pod:
   annotations: {}
-  securityContext:
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+  
+  nodeSelector: {}
+  affinity: {}
+  tolerations: {}
+
+# Container
+container:
+  securityContext: {}
     # fsGroup: 2000
   resources: {}
     # limits:
@@ -26,13 +37,6 @@ pod:
     #   cpu: 100m
     #   memory: 128Mi
 
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
 
 # Service
 service:
@@ -58,5 +62,12 @@ ingress:
 # Cert Manager
 certmanager:
   clusterIssuerEnabled: true
+  clusterIssuerName: "letsencrypt-http01-prod"
   email: yaxin.me@gmail.com
   ingressClassName: nginx
+
+# App Environments
+appEnv: {}
+  #APP_NAME: "helm-template"
+  #APP_VERSION: "v1.0.0"
+  #APP_ENV: "prod"

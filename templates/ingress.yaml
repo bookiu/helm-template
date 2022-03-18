@@ -1,5 +1,5 @@
 {{- if .Values.ingress.enabled -}}
-{{- $ingressName := include "fullname" . -}}
+{{- $ingressName := include "name" . -}}
 {{- $theIngress := lookup "v1" "ingress" .Release.Namespace .Values.image.secret.name -}}
 
 {{- if not $theIngress -}}

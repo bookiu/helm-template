@@ -1,5 +1,8 @@
 {{- if .Values.ingress.enabled -}}
 {{- $ingressName := include "fullname" . -}}
+{{- $theIngress := lookup "v1" "ingress" .Release.Namespace .Values.image.secret.name -}}
+
+{{- if not $theIngress -}}
 {{- $svcPort := .Values.service.port -}}
 {{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
   {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
@@ -48,4 +51,5 @@ spec:
               serviceName: {{ $ingressName }}
               servicePort: {{ $svcPort }}
               {{- end }}
+{{- end }}
 {{- end }}
